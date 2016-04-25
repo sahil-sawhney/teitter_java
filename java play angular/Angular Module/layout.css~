@@ -1,0 +1,12 @@
+.myHeader{
+	background:blue;
+	color: white;
+	font-size: 60px;
+	text-align:center;
+	font-family:Verdana, Geneva, sans-serif
+}
+
+.buttonText{
+	font-size: 17px;
+	color: white
+}

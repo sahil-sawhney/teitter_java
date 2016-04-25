@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html ng-app="twitterModule">
+
+	<head>
+		<title>Twitter Analysis Tool</title>
+		<link rel="stylesheet" type="text/css" href="assets/css/bootstrap.min.css">
+		<link rel="stylesheet" type="text/css" href="assets/css/bootstrap-theme.min.css">
+		<link rel="stylesheet" type="text/css" href="layout.css">		
+		<meta charset="utf-8">
+  		<meta name="viewport" content="width=device-width, initial-scale=1">
+	</head>
+
+
+	<body class="container-fluid">
+		<div ng-controller="tweetsCtrl">
+			<header>
+				<div class="row header">
+				    <p class="myHeader" Style="color:white">Twitter Analysis Module</p>
+				</div>
+			</header>
+
+			<div class="row" align="middle">
+				<img  src="assets/pictures/twitter-logo.png" style="width:200px;height:200px;">
+			</div>
+
+			<div clas="row" >
+				<div class="col-md-2 col-sm-2 col-xs-4"></div>
+
+				<button type="button" ng-click="sortByLike()" class="buttonText btn btn-success col-md-2 col-sm-2 col-xs-4">Sort By <b>LIKES</b></button>		
+
+				<div class="col-md-1 col-sm-1 col-xs-4"></div>
+
+				<button type="button" ng-click="sortByDate()" class="buttonText btn btn-success col-md-2 col-sm-2 col-xs-4">Sort By <b>DATE</b></button>			
+
+				<div class="col-md-1 col-sm-1 col-xs-4"></div>
+
+				<button type="button" ng-click="sortByRetweet()" class="buttonText btn btn-success col-md-2 col-sm-2 col-xs-4">Sort By <b>RETWEET</b></button>
+
+				<div class="col-md-2 col-sm-2 col-xs-4"></div>			
+			</div>
+
+			<div class="row">
+				<div ng-view></div>
+			</div>
+		</div>
+
+		<script src="assets/js/jquery-2.2.0.min.js"></script>
+		<script src="assets/js/angular.min.js"></script>
+		<script src="assets/js/angular-route.min.js"></script>
+		<script src="assets/js/bootstrap.min.js"></script>
+		<script>
+
+			var twitterModule=angular.module('twitterModule',['ngRoute']);
+
+			twitterModule.config(function($routeProvider){
+				$routeProvider
+				.when('/v1',{
+					controller:'tweetsCtrl',
+					templateUrl:'partials/view1.html'
+				})
+				.when('/v2',{
+					controller:'tweetsCtrl',
+					templateUrl:'partials/view2.html'
+				})
+				.when('/v3',{
+					controller:'tweetsCtrl',
+					templateUrl:'partials/view3.html'
+				})
+				.otherwise({redirectTo:'/v1'});
+			});
+
+/////////////////////////////////////////////////////////////////////////////////////////////////	
+
+			twitterModule.controller('tweetsCtrl',['$scope', '$location', '$routeParams', 'twitterFactory', function($scope, $location, $routeParams, twitterFactory){
+
+				$scope.sortByLike=function(){
+
+					twitterFactory.sortTweetsByLike()
+					.success(function (tweets) {
+	                	$scope.tweetList = tweets;
+	                	$location.path('/v1');
+	            	})
+	            	.error(function (error) {
+	                	
+	            	});					
+				};
+
+				$scope.sortByDate=function(){
+
+					twitterFactory.sortTweetsByDate()
+					.success(function (tweets) {
+	                	$scope.tweetList = tweets;
+	                	$location.path('/v2');
+	            	})
+	            	.error(function (error) {
+	                	
+	            	});
+				};
+
+				$scope.sortByRetweet=function(){
+
+					twitterFactory.sortTweetByRetweet()
+					.success(function (tweets) {
+	                	$scope.tweetList = tweets;
+	                	$location.path('/v3');
+	            	})
+	            	.error(function (error) {
+	                	
+	            	});
+				};
+			}]);
+
+
+			twitterModule.factory('twitterFactory', ['$http',function($http){
+				var factory={};
+
+				factory.sortTweetsByLike=function(){
+					return $http.get('http://localhost:9000/tweetByLikes');
+				}
+
+				factory.sortTweetsByDate = function () {
+        			return $http.get('http://localhost:9000/tweetByDate');
+    			};
+
+    			factory.sortTweetByRetweet = function () {
+        			return $http.get('http://localhost:9000/tweetByRetweet');
+    			};
+
+				return factory;
+			}]);
+
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+ 		</script>
+	</body>
+
+</html>
